@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="g3d.com.mng.service.ManagementMapper">
+
+	<resultMap id="serviceSettingResultMap" type="serviceSettingVO">
+		<id property="id" column="id"/>
+		<result property="coordinateSystem" column="coordinate_system" />
+		<result property="initialLon" column="initial_lon" />
+		<result property="initialLat" column="initial_lat" />
+		<result property="initialZoom" column="initial_zoom" />
+		<collection property="rasters" javaType="java.util.ArrayList" column="id" ofType="java.lang.String" select="getServicedRasters"/>
+		<collection property="vectors" javaType="java.util.ArrayList" column="id" ofType="java.lang.String" select="getServicedVectors"/>
+	</resultMap>
+
+	<!-- 기본 세팅 관련 쿼리들 -->
+	<select id="getServiceSetting" resultMap="serviceSettingResultMap">
+		SELECT * FROM service_settings WHERE ID = #{id}
+	</select>
+	<insert id="insertServiceSetting" parameterType="serviceSettingVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT into service_settings (url, initial_zoom, initial_lon, initial_lat, coordinate_system) values (#{url}, #{initialZoom}, #{initialLon}, #{initialLat}, #{coordinateSystem})
+	</insert>
+	<update id="updateServiceSetting" parameterType="serviceSettingVO">
+		UPDATE service_settings set url=#{url}, initial_zoom=#{initialZoom}, initial_lon=#{initialLon}, initial_lat=#{initialLat}, coordinate_system=#{coordinateSystem} WHERE id=#{id}
+	</update>
+	<delete id="deleteServiceSetting" parameterType="int">
+		DELETE from service_settings WHERE id=#{id}
+	</delete>
+
+	<!-- 레이어 세팅 관련 쿼리들 -->
+	<select id="getServicedRasters" resultType="java.lang.String">
+		SELECT layer_name FROM serviced_rasters WHERE service_id = #{serviceId} ORDER BY z_order ASC
+	</select>
+	<select id="getServicedVectors" resultType="java.lang.String">
+		SELECT layer_name FROM serviced_vectors WHERE service_id = #{serviceId} ORDER BY z_order ASC
+	</select>
+
+	<insert id="insertServicedRaster">
+		INSERT into serviced_rasters (layer_name, service_id, z_order) values (#{raster}, #{serviceId}, #{zOrder})
+	</insert>	
+	<insert id="insertServicedVector">
+		INSERT into serviced_vectors (layer_name, service_id, z_order) values (#{vector}, #{serviceId}, #{zOrder})
+	</insert>
+
+	<delete id="deleteServicedRastersByServiceId">
+		DELETE FROM serviced_rasters WHERE service_id = #{serviceId}
+	</delete>
+	<delete id="deleteServicedVectorsByServiceId">
+		DELETE FROM serviced_vectors WHERE service_id = #{serviceId}
+	</delete>
+	<delete id="deleteServicedRasterByZOrder">
+		DELETE FROM serviced_rasters WHERE service_id = #{serviceId} AND z_order = #{zOrder}
+	</delete>
+	<delete id="deleteServicedVectorByZOrder">
+		DELETE FROM serviced_vectors WHERE service_id = #{serviceId} AND z_order = #{zOrder}
+	</delete>
+ 
+</mapper> 

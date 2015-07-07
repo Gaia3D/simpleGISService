@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="serviceSettingVO" type="g3d.com.mng.ServiceSettingVO" />     
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="egovframework/mapper/g3d/g3dServiceSetting_SQL_Mysql.xml"/>
+	</mappers>
+</configuration> 

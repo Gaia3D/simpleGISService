@@ -1,0 +1,211 @@
+@charset "utf-8";
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, textarea, p, blockquote, th, td, input, select, textarea, button {
+margin:0;
+padding:0;
+}
+fieldset, img {
+border:0 none;
+}
+dl, ul, ol, menu, li {
+list-style:outside none none;
+}
+input, select, textarea, button {
+vertical-align:middle;
+}
+button {
+background-color:transparent;
+border:0 none;
+cursor:pointer;
+}
+body, th, td, input, select, textarea, button {
+color:#666;
+font-family:"돋움",dotum, sans-serif;
+font-size:12px;
+line-height:1.5;
+}
+a {
+color: #444;
+text-decoration: none;
+}
+a:active, a:hover {
+text-decoration:none;
+}
+a:active {
+background-color: transparent;
+}
+
+
+/* 공통적용 */
+body {
+background:#f6f6f6;
+}
+button.btn {
+padding:5px 20px;
+color:#FFF;
+text-align:center;
+border:1px solid #00478d;
+background-color:#0062c3;
+}
+button.btn:hover {
+color:#0062c3;
+border:1px solid #0062c3;
+background-color:#fff;
+}
+button.btnsm {
+padding:1px 5px;
+color:#555;
+text-align:center;
+border:1px solid #777;
+background-color:#fff;
+}
+input {
+padding:1px;
+border:1px solid #0062c3;
+}
+
+/* HEADER */
+#header {
+height:60px;
+background:url(../images/header_bg.png) repeat-x;
+}
+h1 {
+width:600px;
+margin:0 auto;
+padding-top:12px;
+color:#FFF;
+text-align:center;
+}
+
+/* NAV */
+#nav {
+width:850px;
+height:170px;
+margin:5px auto 0;
+border:1px solid #ccc;
+background:#FFF;
+}
+#nav p {
+margin:10px;
+}
+#nav label  {
+display:inline-block;
+width:100px;
+}
+h2 {
+margin:0 0 0 15px;
+padding-left:10px;
+font-size:13px;
+color:#333;
+background:url(../images/bullet_aqua.png) no-repeat left 50%;
+}
+span.ok {
+color:#0062c3;
+padding-left:25px;
+background:url(../images/ico_info.png) no-repeat left 2px;
+}
+span.no {
+color:#ff3300;
+padding-left:25px;
+background:url(../images/ico_info.png) no-repeat left 2px;
+}
+.message {
+padding-left:102px;
+}
+/* CONTENTS */
+#contents {
+margin:5px auto;
+width:850px;
+height:360px;
+border:1px solid #ccc;
+background:#FFF;
+}
+#contents .section {
+float:left;
+width:400px;
+margin:10px;
+}
+#contents ul {
+float:left;
+margin-bottom:15px;
+}
+#contents ul li {
+margin:5px;
+}
+#contents ul li a:hover {
+background-color:#eee;
+}
+#contents ul li a {
+display:inline-block;
+width:100%;
+padding:2px;
+}
+#contents .list {
+overflow-x:hidden;
+overflow-y:auto;
+width:170px;
+height:275px;
+border:1px solid #CCC;
+}
+.AlignCenter {
+margin:10px;
+text-align:center;
+}
+.AlignRight {
+margin:0 13px;
+text-align:right;
+}
+.imgbtn {
+width:30px;
+height:20px;
+margin:0;
+padding:0;
+border-radius:2px;
+border:1px solid #c6cedc;
+text-indent:-9999;
+background-image:url(../images/imgbtn.png);
+background-repeat:no-repeat;
+}
+.imgbtn.up {
+background-position:0 0;
+}
+.imgbtn.down {
+background-position:0 -20px;
+}
+.imgbtn.delete {
+background-position:0 -40px;
+}
+
+
+/* SECTION ADD */
+#sectionadd {
+width:850px;
+margin:5px auto;
+padding:15px 0;
+border:1px solid #ccc;
+background:#FFF;
+}
+.addlist {
+overflow-x:hidden;
+overflow-y:auto;	
+height:80px;
+margin:15px;
+padding:10px;
+border:1px solid #eee;
+}
+/* BTNS */
+#btns {
+width:850px;
+margin:5px auto;
+padding:15px 0;
+text-align:center;
+border:1px solid #ccc;
+background:#FFF;
+}
+.btns input {
+width:50px;
+}
+.btns span {
+display:inline-block;
+margin-left:20px;
+
+}
