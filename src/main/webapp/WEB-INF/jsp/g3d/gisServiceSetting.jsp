@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
    	<meta content="IE=edge" http-equiv="X-UA-Compatible">
     <title>관리자용 서비스 관리</title>
-    <link href="css/style.css" type="text/css" rel="stylesheet" />
+    <link href="<c:url value='/css/g3d/css/style.css' />" type="text/css" rel="stylesheet" />
 </head>
 <body>
 <div id="header">
@@ -16,11 +16,18 @@
 <div id="nav">
 	<p>
     	<label>URL</label>
-        <input type="text" value="GEOServer URL" size="50">
-        <button onClick="" class="btnsm" type="button">접근확인</button>
+    	<c:choose>
+	    	<c:when test="${serviceSetting.url == null}">
+		<input id="url" type="text" value="GeoServer URL을 입력하세요." size="50">
+	        </c:when>
+	        <c:otherwise>
+		<input id="url" type="text" value="${serviceSetting.url}" size="50">
+	        </c:otherwise>
+        </c:choose>
+        <button id="checkIfGeoServerAlive" onClick="" class="btnsm" type="button">접근확인</button>
     </p>
     <p class="message">
-        <span class="ok">사용가능한 URL이 아닙니다. 접근확인을 다시 실행해 주세요.</span>
+        <span class="ok">사용가능한 URL인지 확인하기 위해 '접근확인'을 눌러 주세요.</span>
     </p>
     <p>
     	<label>좌표체계</label>
