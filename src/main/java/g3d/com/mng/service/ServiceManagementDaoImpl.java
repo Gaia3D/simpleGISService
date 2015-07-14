@@ -31,16 +31,16 @@ public class ServiceManagementDaoImpl implements ManagementDao
 
 			if(vo.getId() != null)
 			{
-				updateServicedRastersByServiceId(vo.getId(), vo.getRasters());
-				updateServicedVectorsByServiceId(vo.getId(), vo.getVectors());
+				updateServicedRastersByServiceId(vo.getId(), vo.getRasters(), vo.getRasterAlphas());
+				updateServicedVectorsByServiceId(vo.getId(), vo.getVectors(), vo.getVectorAlphas());
 			}
 		}
 		else
 		{
 			// 2. 기존 세팅 갱신
 			managementMapper.updateServiceSetting(vo);
-			updateServicedRastersByServiceId(vo.getId(), vo.getRasters());
-			updateServicedVectorsByServiceId(vo.getId(), vo.getVectors());
+			updateServicedRastersByServiceId(vo.getId(), vo.getRasters(), vo.getRasterAlphas());
+			updateServicedVectorsByServiceId(vo.getId(), vo.getVectors(), vo.getVectorAlphas());
 		}
 	}
 	
@@ -51,21 +51,21 @@ public class ServiceManagementDaoImpl implements ManagementDao
 		managementMapper.deleteServicedVectorsByServiceId(vo.getId());
 	}
 
-	protected void updateServicedRastersByServiceId(int serviceId, List<String> rasters)
+	protected void updateServicedRastersByServiceId(int serviceId, List<String> rasters, List<Double>rasterAlphas)
 	{
 		managementMapper.deleteServicedRastersByServiceId(serviceId);
-		
+
 		int rasterCount = rasters.size();
 		for(int i = 0; i < rasterCount; i++)
-			managementMapper.insertServicedRaster(rasters.get(i), serviceId, i);
+			managementMapper.insertServicedRaster(rasters.get(i), serviceId, i, rasterAlphas.get(i));
 	}
 	
-	protected void updateServicedVectorsByServiceId(int serviceId, List<String> vectors)
+	protected void updateServicedVectorsByServiceId(int serviceId, List<String> vectors, List<Double> vectorAlphas)
 	{
 		managementMapper.deleteServicedVectorsByServiceId(serviceId);
 		
 		int vectorCount = vectors.size();
 		for(int i = 0; i < vectorCount; i++)
-			managementMapper.insertServicedVector(vectors.get(i), serviceId, i);
+			managementMapper.insertServicedVector(vectors.get(i), serviceId, i, vectorAlphas.get(i));
 	}
 }

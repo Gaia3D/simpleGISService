@@ -1,11 +1,15 @@
 package g3d.com.mng.web;
 
-import javax.annotation.Resource;
+import java.util.Enumeration;
 
-import egovframework.com.cmm.service.EgovProperties;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import g3d.com.mng.ServiceSettingVO;
 import g3d.com.mng.service.ManagementService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +20,8 @@ public class ServiceManagementController {
 	
 	@Resource(name = "serviceSettingService")
 	private ManagementService managementService;
+	
+//	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceManagementController.class);
 	
 	@RequestMapping(value="/g3d/normalServiceSettings.do")
 	public String getNormalServiceSettings(ModelMap model)
@@ -38,6 +44,7 @@ public class ServiceManagementController {
 	public String setNormalServiceSettings(@ModelAttribute("serviceSettingVO") ServiceSettingVO serviceSettingVO, ModelMap modelMap)
 	{
 		System.out.println("save settings requested");
+
 		return "redirect:/uat/uia/actionMain.do";
 	}
 }

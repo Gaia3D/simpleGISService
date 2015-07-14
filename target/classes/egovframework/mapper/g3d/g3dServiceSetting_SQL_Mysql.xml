@@ -10,6 +10,8 @@
 		<result property="initialZoom" column="initial_zoom" />
 		<collection property="rasters" javaType="java.util.ArrayList" column="id" ofType="java.lang.String" select="getServicedRasters"/>
 		<collection property="vectors" javaType="java.util.ArrayList" column="id" ofType="java.lang.String" select="getServicedVectors"/>
+		<collection property="rasterAlphas" javaType="java.util.ArrayList" column="id" ofType="java.lang.Double" select="getServicedRasterAlphas"/>
+		<collection property="vectorAlphas" javaType="java.util.ArrayList" column="id" ofType="java.lang.Double" select="getServicedVectorAlphas"/>
 	</resultMap>
 
 	<!-- 기본 세팅 관련 쿼리들 -->
@@ -33,12 +35,18 @@
 	<select id="getServicedVectors" resultType="java.lang.String">
 		SELECT layer_name FROM serviced_vectors WHERE service_id = #{serviceId} ORDER BY z_order ASC
 	</select>
+	<select id="getServicedRasterAlphas" resultType="java.lang.Double">
+		SELECT alpha FROM serviced_rasters WHERE service_id = #{serviceId} ORDER BY z_order ASC
+	</select>
+	<select id="getServicedVectorAlphas" resultType="java.lang.Double">
+		SELECT alpha FROM serviced_vectors WHERE service_id = #{serviceId} ORDER BY z_order ASC
+	</select>
 
 	<insert id="insertServicedRaster">
-		INSERT into serviced_rasters (layer_name, service_id, z_order) values (#{raster}, #{serviceId}, #{zOrder})
+		INSERT into serviced_rasters (layer_name, service_id, z_order, alpha) values (#{raster}, #{serviceId}, #{zOrder}, #(alpha))
 	</insert>	
 	<insert id="insertServicedVector">
-		INSERT into serviced_vectors (layer_name, service_id, z_order) values (#{vector}, #{serviceId}, #{zOrder})
+		INSERT into serviced_vectors (layer_name, service_id, z_order, alpha) values (#{vector}, #{serviceId}, #{zOrder}, #(alpha))
 	</insert>
 
 	<delete id="deleteServicedRastersByServiceId">

@@ -17,9 +17,11 @@ public interface ManagementMapper
 
 	public ArrayList<String> getServicedRasters(int serviceId);
 	public ArrayList<String> getServicedVectors(int serviceId);
+	public ArrayList<Double> getServicedRasterAlphas(int serviceId);
+	public ArrayList<Double> getServicedVectorAlphas(int serviceId);
 	
-	public void insertServicedRaster(@Param("raster") String raster, @Param("serviceId") int serviceId, @Param("zOrder") int zOrder);
-	public void insertServicedVector(@Param("vector") String vector, @Param("serviceId") int serviceId, @Param("zOrder") int zOrder);
+	public void insertServicedRaster(@Param("raster") String raster, @Param("serviceId") int serviceId, @Param("zOrder") int zOrder, @Param("alpha") double alpha);
+	public void insertServicedVector(@Param("vector") String vector, @Param("serviceId") int serviceId, @Param("zOrder") int zOrder, @Param("alpha") double alpha);
 	
 	public void deleteServicedRastersByServiceId(int serviceId);
 	public void deleteServicedRasterByZOrder(@Param("serviceId") int serviceId, @Param("zOrder") int zOrder);

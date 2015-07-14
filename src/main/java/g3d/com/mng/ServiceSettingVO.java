@@ -19,7 +19,11 @@ public class ServiceSettingVO
 	
 	List<String> rasters = new ArrayList<String>();
 	
+	List<Double> rasterAlphas = new ArrayList<Double>();
+	
 	List<String> vectors = new ArrayList<String>();
+	
+	List<Double> vectorAlphas = new ArrayList<Double>();
 	
 //	List<String> rastersToBeRemoved = new  ArrayList<String>();
 //	
@@ -99,6 +103,16 @@ public class ServiceSettingVO
 		this.rasters = rasters;
 	}
 	
+	public List<Double> getRasterAlphas()
+	{
+		return this.rasterAlphas;
+	}
+	
+	public void setRasterAlphas(List<Double> rasterAlphas)
+	{
+		this.rasterAlphas = rasterAlphas;
+	}
+	
 	public List<String> getVectors()
 	{
 		return this.vectors;
@@ -107,6 +121,16 @@ public class ServiceSettingVO
 	public void setVectors(List<String> vectors)
 	{
 		this.vectors = vectors;
+	}
+	
+	public List<Double> getVectorAlphas()
+	{
+		return this.vectorAlphas;
+	}
+	
+	public void setVectorAlphas(List<Double> vectorAlphas)
+	{
+		this.vectorAlphas = vectorAlphas;
 	}
 	
 //	public List<String> getRastersToBeRemoved()

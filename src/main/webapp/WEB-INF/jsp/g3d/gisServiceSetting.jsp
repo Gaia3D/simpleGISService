@@ -270,14 +270,14 @@ function validateServiceSettings()
 </div>
 <div id="nav">
 	<p>
-		<input id="id" type="hidden" value="${serviceSetting.id}">
+		<input type="hidden" value="${serviceSetting.id}" name="id" >
     	<label>URL</label>
     	<c:choose>
 	    	<c:when test="${serviceSetting.url == null}">
-		<input id="url" type="text" size="100">
+		<input id="url" type="text" size="100" name="url">
 	        </c:when>
 	        <c:otherwise>
-		<input id="url" type="text" value="${serviceSetting.url}" size="100">
+		<input id="url" type="text" value="${serviceSetting.url}" size="100" name="url">
 	        </c:otherwise>
         </c:choose>
         <button id="checkGeoServer" class="btnsm" type="button">접근확인</button>
@@ -287,22 +287,22 @@ function validateServiceSettings()
     </p>
     <p>
     	<label>좌표체계</label>
-        <input id="coordinateSystem" type="text" value="${serviceSetting.coordinateSystem}">
+        <input id="coordinateSystem" type="text" value="${serviceSetting.coordinateSystem}" name="coordinateSystem">
     </p>
     <p>
     	<label>초기좌표</label>
     	<c:choose>
 	    	<c:when test="${serviceSetting.url == null}">
-        경도<input id="initialLon" type="text" value="경도">위도<input type="text" value="위도">
+        경도<input id="initialLon" type="text" value="경도" name="initialLon">위도<input type="text" value="위도" name="initialLat">
         	</c:when>
 	        <c:otherwise>
-		경도 <input id="initialLon" type="text" value="${serviceSetting.initialLon}">   위도 <input type="text" value="${serviceSetting.initialLat}">
+		경도 <input id="initialLon" type="text" value="${serviceSetting.initialLon}" name="initialLon">   위도 <input type="text" value="${serviceSetting.initialLat}" name="initialLat">
 			</c:otherwise>
         </c:choose>
     </p>
     <p>
     	<label>초기확대배율</label>
-        <input id="initialZoom" type="text" value="${serviceSetting.initialZoom}">
+        <input id="initialZoom" type="text" value="${serviceSetting.initialZoom}" name="initialZoom">
     </p>
 
 </div>
@@ -311,20 +311,18 @@ function validateServiceSettings()
 <div id="contents">
     <div class="section">
         <h2>Raster Layer List</h2>
-        <input type="hidden" id="rasters">
-        <input type="hidden" id="rasterAlphas">
         <ul class="list" id="rasterList">
 			<c:forEach var="layerName" items="${serviceSetting.rasters}" varStatus="status">
-			<li><a href="#">${layerName}</a>  </li>
+			<li><a href="#">${layerName}</a><input type="hidden" value="${layerName}" name="rasters"></li>
 			</c:forEach>            	          	
         </ul>
         <ul class="btns" id="rasterListUiList">
-			<c:forEach items="${serviceSetting.rasters}"  varStatus="status">
+			<c:forEach var="alpha" items="${serviceSetting.rasterAlphas}"  varStatus="status">
 			<li>
                 <button class="imgbtn up rasterUp" type="button" title="UP">up</button>
                 <button class="imgbtn down rasterDown" type="button" title="down">down</button>
                 <button class="imgbtn delete rasterDelete" type="button" title="delete">delete</button>
-                <span>alpha <input type="text"></span>
+                <span>alpha <input type="text" value="${alpha}" name="rasterAlphas"></span>
             </li>
 			</c:forEach>
         </ul>
@@ -335,20 +333,18 @@ function validateServiceSettings()
     <!-- END Raster Layer List -->
     <div class="section">
         <h2>Vector Layer List</h2>
-        <input type="hidden" id="vectors">
-        <input type="hidden" id="vectorAlphas">
         <ul class="list" id="vectorList">
 			<c:forEach var="layerName" items="${serviceSetting.vectors}" varStatus="status">
-			<li><a href="#">${layerName}</a>  </li>
+			<li><a href="#">${layerName}</a><input type="hidden" value="${layerName}" name="vectors"></li>
 			</c:forEach>        	          	
         </ul>
         <ul class="btns" id="vectorListUiList">
-			<c:forEach items="${serviceSetting.vectors}" varStatus="status">
+			<c:forEach var="alpha" items="${serviceSetting.vectorAlphas}" varStatus="status">
 			<li>
                 <button class="imgbtn up vectorUp" type="button" title="UP">up</button>
                 <button class="imgbtn down vectorDown" type="button" title="down">down</button>
                 <button class="imgbtn delete vectorDelete" type="button" title="delete">delete</button>
-                <span>alpha <input type="text"></span>
+                <span>alpha <input type="text" value="${alpha}" name="vectorAlphas"></span>
             </li>
 			</c:forEach>
         </ul>
