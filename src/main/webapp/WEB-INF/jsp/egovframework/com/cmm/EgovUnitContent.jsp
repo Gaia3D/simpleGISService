@@ -15,7 +15,7 @@
 		<c:if test="${loginVO.userSe == \"USR\" && loginVO.uniqId == adminKey}">
 			관리자입니다.<p/>
 			<a href="${pageContext.request.contextPath }/uss/umt/EgovMberManage.do">회원관리</a>
-			<a href="${pageContext.request.contextPath }/g3d/manageBasicService.do">기본 서비스관리</a>
+			<a href="${pageContext.request.contextPath }/g3d/normalServiceSettings.do">기본 서비스관리</a>
 		</c:if>
 		<c:if test="${loginVO.userSe == \"USR\" && loginVO.uniqId == webMasterKey}">
 			웹마스터입니다.<p/>

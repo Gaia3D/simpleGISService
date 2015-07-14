@@ -7,6 +7,7 @@ import g3d.com.mng.ServiceSettingVO;
 import g3d.com.mng.service.ManagementService;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.ModelMap;
 
@@ -16,8 +17,8 @@ public class ServiceManagementController {
 	@Resource(name = "serviceSettingService")
 	private ManagementService managementService;
 	
-	@RequestMapping(value="/g3d/manageBasicService.do")
-	public String currentSettings(ModelMap model)
+	@RequestMapping(value="/g3d/normalServiceSettings.do")
+	public String getNormalServiceSettings(ModelMap model)
 	{	
 		ServiceSettingVO vo = managementService.getNormalServiceSetting();
 	
@@ -33,4 +34,10 @@ public class ServiceManagementController {
 		return "g3d/gisServiceSetting";
 	}
 
+	@RequestMapping(value="/g3d/setNormalServiceSettings.do")
+	public String setNormalServiceSettings(@ModelAttribute("serviceSettingVO") ServiceSettingVO serviceSettingVO, ModelMap modelMap)
+	{
+		System.out.println("save settings requested");
+		return "redirect:/uat/uia/actionMain.do";
+	}
 }

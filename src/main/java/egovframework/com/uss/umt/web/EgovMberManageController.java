@@ -79,7 +79,7 @@ public class EgovMberManageController {
 
 		// 미인증 사용자에 대한 보안처리
 //		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-//		if (!isAuthenticated) {
+//		if (isAuthenticated) {
 //			// return "index";
 //			// index.jsp라는 template이 없는 관계로 아래와 같이 수정 - khj 20150609
 //			return "forward:/EgovContent.do";
@@ -135,10 +135,16 @@ public class EgovMberManageController {
 			throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		ComDefaultCodeVO vo = new ComDefaultCodeVO();
 
@@ -175,10 +181,16 @@ public class EgovMberManageController {
 	public String insertMber(@ModelAttribute("entrprsManageVO") MberManageVO mberManageVO, BindingResult bindingResult, Model model) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		beanValidator.validate(mberManageVO, bindingResult);
 		if (bindingResult.hasErrors()) {
@@ -206,10 +218,16 @@ public class EgovMberManageController {
 	public String updateMberView(@RequestParam("selectedId") String mberId, @ModelAttribute("searchVO") UserDefaultVO userSearchVO, Model model) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		ComDefaultCodeVO vo = new ComDefaultCodeVO();
 
@@ -253,10 +271,16 @@ public class EgovMberManageController {
 	public String updateMber(@ModelAttribute("mberManageVO") MberManageVO mberManageVO, BindingResult bindingResult, Model model) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		beanValidator.validate(mberManageVO, bindingResult);
 		if (bindingResult.hasErrors()) {
@@ -284,10 +308,16 @@ public class EgovMberManageController {
 	public String deleteMber(@RequestParam("checkedIdForDel") String checkedIdForDel, @ModelAttribute("searchVO") UserDefaultVO userSearchVO, Model model) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		mberManageService.deleteMber(checkedIdForDel);
 		//Exception 없이 진행시 삭제성공메시지
