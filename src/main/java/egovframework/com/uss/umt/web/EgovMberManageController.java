@@ -86,6 +86,7 @@ public class EgovMberManageController {
 //		}
 		
 		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
 		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		if(authentificatedUser == null || 
 				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
@@ -140,6 +141,8 @@ public class EgovMberManageController {
 //			return "index";
 //		}
 		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
 		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		if(authentificatedUser == null || 
 				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
@@ -186,6 +189,8 @@ public class EgovMberManageController {
 //			return "index";
 //		}
 		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
 		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		if(authentificatedUser == null || 
 				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
@@ -223,6 +228,8 @@ public class EgovMberManageController {
 //			return "index";
 //		}
 		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
 		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		if(authentificatedUser == null || 
 				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
@@ -276,6 +283,8 @@ public class EgovMberManageController {
 //			return "index";
 //		}
 		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
 		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		if(authentificatedUser == null || 
 				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
@@ -313,6 +322,8 @@ public class EgovMberManageController {
 //			return "index";
 //		}
 		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
 		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		if(authentificatedUser == null || 
 				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
@@ -360,10 +371,18 @@ public class EgovMberManageController {
 			@RequestParam Map<String, Object> commandMap, Model model) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		ComDefaultCodeVO vo = new ComDefaultCodeVO();
 
@@ -399,10 +418,18 @@ public class EgovMberManageController {
 	public String sbscrbMber(@ModelAttribute("mberManageVO") MberManageVO mberManageVO) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		//가입상태 초기화
 		mberManageVO.setMberSttus("A");
@@ -423,10 +450,18 @@ public class EgovMberManageController {
 	public String sbscrbEntrprsMber(Model model) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		//일반회원용 약관 아이디 설정
 		String stplatId = "STPLAT_0000000000001";
@@ -453,10 +488,18 @@ public class EgovMberManageController {
 			@ModelAttribute("mberManageVO") MberManageVO mberManageVO) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		String oldPassword = (String) commandMap.get("oldPassword");
 		String newPassword = (String) commandMap.get("newPassword");
@@ -513,10 +556,18 @@ public class EgovMberManageController {
 			@ModelAttribute("mberManageVO") MberManageVO mberManageVO) throws Exception {
 
 		// 미인증 사용자에 대한 보안처리
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		if (isAuthenticated) {
-			return "index";
-		}
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		if (isAuthenticated) {
+//			return "index";
+//		}
+		
+		// 위 코드는 반대로 되어 있음. 또한 일반사용자와 업무사용자 구분 불가
+		// 유저 권한 관리 기능이 없으므로 임시로 아래처럼 처리한다. - khj 20150714
+		LoginVO authentificatedUser = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		if(authentificatedUser == null || 
+				authentificatedUser.getUserSe() == null || !authentificatedUser.getUserSe().equals("USR") ||
+				authentificatedUser.getUniqId() == null || !authentificatedUser.getUniqId().equals("USRCNFRM_00000000000"))
+			return "forward:/EgovContent.do";
 
 		String userTyForPassword = (String) commandMap.get("userTyForPassword");
 		mberManageVO.setUserTy(userTyForPassword);

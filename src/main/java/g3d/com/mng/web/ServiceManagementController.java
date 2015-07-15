@@ -1,9 +1,8 @@
 package g3d.com.mng.web;
 
-import java.util.Enumeration;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import g3d.com.mng.ServiceSettingVO;
 import g3d.com.mng.service.ManagementService;
@@ -21,10 +20,10 @@ public class ServiceManagementController {
 	@Resource(name = "serviceSettingService")
 	private ManagementService managementService;
 	
-//	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceManagementController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceManagementController.class);
 	
 	@RequestMapping(value="/g3d/normalServiceSettings.do")
-	public String getNormalServiceSettings(ModelMap model)
+	public String getNormalServiceSettings(ModelMap model, HttpServletResponse response, HttpServletRequest request)
 	{	
 		ServiceSettingVO vo = managementService.getNormalServiceSetting();
 	
@@ -37,6 +36,13 @@ public class ServiceManagementController {
 
 		model.addAttribute("serviceSetting", vo);
 		
+		// GeoServer쪽으로 cross domain을 허용해주고 이에 따른 보안처리도 해야 한다.
+		// 보안 정보는 나중에 .properties에 심어준다. - khj 20150714
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.addHeader("Access-Control-Allow-Methods", "GET, POST");
+		response.addHeader("Access-Control-Allow-Headers", "x-requested-with, Content-Type");
+	    response.addHeader("Access-Control-Max-Age", "86400");
+
 		return "g3d/gisServiceSetting";
 	}
 

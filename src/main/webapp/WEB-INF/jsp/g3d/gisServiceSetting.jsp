@@ -60,11 +60,43 @@ $(function()
 	$("#url").keyup(function(){
 		//alert("geoServerStatus : " + geoServerStatus);
 		geoServerStatus = haveToCheck;
+		$("#geoServerCheckResult").attr("class", "ok");
+		$("#geoServerCheckResult").text("새로운 GeoServer URL이 입력됐습니다. '접근확인'을 눌러주세요.");
 	});
 	
 	// '접근확인'을 눌렀을 때 GeoServer 사용 가능함 확인
 	$("#checkGeoServer").click(function(){
 		//alert('접근확인 클릭!');
+		var url = $("#url").val() + "ows";
+		//alert("url : " + url);
+		
+		var data = {};
+		data.service="wfs";
+		data.version="2.0.0";
+		data.request="GetCapabilities";
+		
+		var jqXHR = $.ajax({
+			url: url,
+			data: data,
+		})
+		.done(function()
+		{
+			//alert("success");
+			geoServerStatus = checkedAsSuccess;
+			$("#geoServerCheckResult").attr("class", "ok");
+			$("#geoServerCheckResult").text("사용 가능한 GeoServer URL입니다.");
+		})
+		.fail(function()
+		{
+			//alert("error");
+			geoServerStatus = checkedAsFailure;
+			$("#geoServerCheckResult").attr("class", "no");
+			$("#geoServerCheckResult").text("사용 불가능한 GeoServer URL입니다.");
+		})
+		.always(function()
+		{
+			
+		});
 	});
 	
 	// raster zorder를 올렸을 때
@@ -221,6 +253,11 @@ $(function()
 }
 );
 
+function checkResponse(data)
+{
+	alert("data arriven.");
+}
+
 // save & cancel
 function actionSave()
 {
@@ -283,7 +320,7 @@ function validateServiceSettings()
         <button id="checkGeoServer" class="btnsm" type="button">접근확인</button>
     </p>
     <p class="message">
-        <span class="ok">새 URL을 입력했을 경우 사용가능한 URL인지 확인하기 위해 '접근확인'을 눌러 주세요.</span>
+        <span class="ok" id="geoServerCheckResult">새 URL을 입력했을 경우 사용가능한 URL인지 확인하기 위해 '접근확인'을 눌러 주세요.</span>
     </p>
     <p>
     	<label>좌표체계</label>
