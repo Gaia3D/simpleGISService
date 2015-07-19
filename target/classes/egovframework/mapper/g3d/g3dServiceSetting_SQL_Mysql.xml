@@ -8,6 +8,8 @@
 		<result property="initialLon" column="initial_lon" />
 		<result property="initialLat" column="initial_lat" />
 		<result property="initialZoom" column="initial_zoom" />
+		<result property="wfsVersion" column="wfs_version"/>
+		<result property="wmsVersion" column="wms_version"/>
 		<collection property="rasters" javaType="java.util.ArrayList" column="id" ofType="java.lang.String" select="getServicedRasters"/>
 		<collection property="vectors" javaType="java.util.ArrayList" column="id" ofType="java.lang.String" select="getServicedVectors"/>
 		<collection property="rasterAlphas" javaType="java.util.ArrayList" column="id" ofType="java.lang.Double" select="getServicedRasterAlphas"/>
@@ -19,10 +21,10 @@
 		SELECT * FROM service_settings WHERE ID = #{id}
 	</select>
 	<insert id="insertServiceSetting" parameterType="serviceSettingVO" useGeneratedKeys="true" keyProperty="id">
-		INSERT into service_settings (url, initial_zoom, initial_lon, initial_lat, coordinate_system) values (#{url}, #{initialZoom}, #{initialLon}, #{initialLat}, #{coordinateSystem})
+		INSERT into service_settings (url, initial_zoom, initial_lon, initial_lat, coordinate_system, wfs_version, wms_version) values (#{url}, #{initialZoom}, #{initialLon}, #{initialLat}, #{coordinateSystem}, #{wfsVersion}, #{wmsVersion})
 	</insert>
 	<update id="updateServiceSetting" parameterType="serviceSettingVO">
-		UPDATE service_settings set url=#{url}, initial_zoom=#{initialZoom}, initial_lon=#{initialLon}, initial_lat=#{initialLat}, coordinate_system=#{coordinateSystem} WHERE id=#{id}
+		UPDATE service_settings set url=#{url}, initial_zoom=#{initialZoom}, initial_lon=#{initialLon}, initial_lat=#{initialLat}, coordinate_system=#{coordinateSystem}, wfs_version=#{wfsVersion}, wms_version=#{wmsVersion} WHERE id=#{id}
 	</update>
 	<delete id="deleteServiceSetting" parameterType="int">
 		DELETE from service_settings WHERE id=#{id}

@@ -140,8 +140,7 @@ width:100%;
 padding:2px;
 }
 #contents .list {
-overflow-x:hidden;
-overflow-y:auto;
+overflow:auto;
 width:170px;
 height:275px;
 border:1px solid #CCC;
@@ -174,6 +173,9 @@ background-position:0 -20px;
 .imgbtn.delete {
 background-position:0 -40px;
 }
+.imgbtn span {
+	visibility:hidden;
+}
 
 
 /* SECTION ADD */
@@ -189,8 +191,13 @@ overflow-x:hidden;
 overflow-y:auto;	
 height:80px;
 margin:15px;
-padding:10px;
+padding:5px 15px;
 border:1px solid #eee;
+}
+.addlist ul li {
+	margin:0;
+	padding:3px 0;
+	border-bottom:1px dotted #eee;
 }
 /* BTNS */
 #btns {

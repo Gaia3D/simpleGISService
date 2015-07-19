@@ -17,6 +17,10 @@ public class ServiceSettingVO
 	
 	Double initialZoom;
 	
+	String wfsVersion;
+
+	String wmsVersion;
+	
 	List<String> rasters = new ArrayList<String>();
 	
 	List<Double> rasterAlphas = new ArrayList<Double>();
@@ -91,6 +95,26 @@ public class ServiceSettingVO
 	public void setInitialZoom(Double initialZoom)
 	{
 		this.initialZoom = initialZoom;
+	}
+	
+	public void setWfsVersion(String version)
+	{
+		this.wfsVersion = version;
+	}
+	
+	public String getWfsVersion()
+	{
+		return this.wfsVersion;
+	}
+	
+	public void setWmsVersion(String version)
+	{
+		this.wmsVersion = version;
+	}
+	
+	public String getWmsVersion()
+	{
+		return this.wmsVersion;
 	}
 	
 	public List<String> getRasters()

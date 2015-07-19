@@ -19,6 +19,7 @@
 				<value>classpath:/egovframework/rte/fdl/idgnr/messages/idgnr</value>
 				<value>classpath:/egovframework/rte/fdl/property/messages/properties</value>
 				<value>classpath:/egovframework/egovProps/globals</value>
+				<value>classpath:/egovframework/g3d/pageMessages</value>
 			</list>
 		</property>
 		<property name="cacheSeconds">

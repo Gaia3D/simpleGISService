@@ -15,6 +15,8 @@
 <!-- <script type="text/javaScript" language="javascript" src="<c:url value='/js/g3d/jquery-1.11.3.js'/>"></script> -->
 <script type="text/javaScript" language="javascript">
 
+// error message globalization !! - khj 20150717
+
 // global variables
 var showingNone = 0;
 var showingRasters = 1;
@@ -32,8 +34,8 @@ var geoServerStatus = emptyUrl;
 var upward = 0;
 var downward = 1;
 
-var rasterCount = 0;
-var vectorCount = 0;
+var wmsVersion = null;
+var wfsVersion = null;
 
 // initialization
 $(function()
@@ -46,13 +48,6 @@ $(function()
 	else
 		geoServerStatus = alreadyMade;
 	
-	//alert(url);
-	
-	rasterCount = $("#rasterList li").length;
-	vectorCount = $("#vectorList li").length;
-	
-	//alert("raster count : " + rasterCount);
-	
 
 	// *********** setting event handlers ***********
 	
@@ -60,40 +55,91 @@ $(function()
 	$("#url").keyup(function(){
 		//alert("geoServerStatus : " + geoServerStatus);
 		geoServerStatus = haveToCheck;
+		wmsVersion = null;
+		wfsVersion = null;
 		$("#geoServerCheckResult").attr("class", "ok");
-		$("#geoServerCheckResult").text("새로운 GeoServer URL이 입력됐습니다. '접근확인'을 눌러주세요.");
+		$("#geoServerCheckResult").text("새로운 GeoServer URL이 입력됐습니다. 검증을 위해 '접근확인'을 눌러주세요.");
 	});
 	
 	// '접근확인'을 눌렀을 때 GeoServer 사용 가능함 확인
 	$("#checkGeoServer").click(function(){
 		//alert('접근확인 클릭!');
+	
 		var url = $("#url").val() + "ows";
 		//alert("url : " + url);
 		
-		var data = {};
-		data.service="wfs";
-		data.version="2.0.0";
-		data.request="GetCapabilities";
+		var wfsParameters = {};
+		wfsParameters.service="wfs";
+		wfsParameters.request="GetCapabilities";
 		
 		var jqXHR = $.ajax({
 			url: url,
-			data: data,
+			data: wfsParameters,
 		})
-		.done(function()
+		.done(function(data, textStatus, jqXHR)
 		{
-			//alert("success");
-			geoServerStatus = checkedAsSuccess;
-			$("#geoServerCheckResult").attr("class", "ok");
-			$("#geoServerCheckResult").text("사용 가능한 GeoServer URL입니다.");
+			//alert("wfs GetCapabilities arriven");
+			var $xml = $(data);
+			var rootNodeCount = $xml.find("WFS_Capabilities").length;
+			if(rootNodeCount != 1)
+			{
+				resultOfCheckGeoServer(false, "해당 GeoServer의 WFS GetCapabilities가 정상응답 하지 않습니다.");
+				return;
+			}
+			
+			var rootNode = $xml.find("WFS_Capabilities")[0];
+			var thisWfsVersion = $(rootNode).attr("version");
+			if(thisWfsVersion == null)
+			{
+				resultOfCheckGeoServer(false, "해당 GeoServer의 WFS 버전을 확인할 수 없습니다.");
+				return;
+			}
+			//alert("wfs version : " + thisWfsVersion);
+			
+			var wmsParameters = {};
+			wmsParameters.service = "wms";
+			wmsParameters.request = "GetCapabilities";
+			
+			$.ajax({
+				url: url,
+				data: wmsParameters,
+			})
+			.done(function(data, textStatus, jqXHR)
+			{
+				var $xml = $(data);
+				var rootNodeCount = $xml.find("WMS_Capabilities").length;
+				if(rootNodeCount != 1)
+				{
+					resultOfCheckGeoServer(false, "해당 GeoServer의 WMS GetCapabilities가 정상응답 하지 않습니다.");
+					return;
+				}
+				
+				var rootNode = $xml.find("WMS_Capabilities")[0];
+				var thisWmsVersion = $(rootNode).attr("version");
+				if(thisWmsVersion == null)
+				{
+					resultOfCheckGeoServer(false, "해당 GeoServer의 WMS 버전을 확인할 수 없습니다.");
+					return;
+				}
+				//alert("wfs version : " + thisWfsVersion +", wms version : " + thisWmsVersion);
+				wfsVersion = thisWfsVersion;
+				wmsVersion = thisWmsVersion;
+				resultOfCheckGeoServer(true, "사용 가능한 GeoServer URL입니다.");
+			})
+			.fail(function(jqXHR, textStatus, errorThrown)
+			{
+				resultOfCheckGeoServer(false, "유효하지 않은 GeoServer URL 입니다.");
+			})
+			.always(function(data, textStatus, jqXHR)
+			{
+		
+			});
 		})
-		.fail(function()
+		.fail(function(jqXHR, textStatus, errorThrown)
 		{
-			//alert("error");
-			geoServerStatus = checkedAsFailure;
-			$("#geoServerCheckResult").attr("class", "no");
-			$("#geoServerCheckResult").text("사용 불가능한 GeoServer URL입니다.");
+			resultOfCheckGeoServer(false, "유효하지 않은 GeoServer URL 입니다.");
 		})
-		.always(function()
+		.always(function(wfsParameters, textStatus, jqXHR)
 		{
 			
 		});
@@ -205,32 +251,106 @@ $(function()
 	$("#rasterCandidates").click(function(){
 		//alert('raster 추가 클릭!');
 		candidateStatus = showingRasters;
+		
+		var headerNode = $("#sectionadd > h2")[0];
+		$(headerNode).text("Raster Layer 추가");
+		$("#addList").empty();
+		
+		var url = $("#url").val() + "ows";
+		//alert("url : " + url);
+		
+		var data = {};
+		data.service="wms";
+		data.request="GetCapabilities";
+		
+		var jqXHR = $.ajax({
+			url: url,
+			data: data,
+		})
+		.done(function(data, textStatus, jqXHR)
+		{
+			extractRasterList(data);
+		})
+		.fail(function(jqXHR, textStatus, errorThrown)
+		{
+			//alert("wms:GetCapabilities ERROR");
+			$("#addList").text("GeoServer의 WMS가 유효하지 않습니다.");
+		})
+		.always(function(data, textStatus, jqXHR)
+		{
+		});
 	});
 	
 	// vector list에서 '추가'를 눌렀을 때
 	$("#vectorCandidates").click(function(){
 		//alert('vector 추가 클릭!');
 		candidateStatus = showingVectors;
+		
+		var headerNode = $("#sectionadd > h2")[0];
+		$(headerNode).text("Vector Layer 추가");
+		$("#addList").empty();
+		
+		var url = $("#url").val() + "ows";
+		//alert("url : " + url);
+		
+		var data = {};
+		data.service="wfs";
+		data.request="GetCapabilities";
+		
+		var jqXHR = $.ajax({
+			url: url,
+			data: data,
+		})
+		.done(function(data, textStatus, jqXHR)
+		{
+			extractVectorList(data);
+		})
+		.fail(function(jqXHR, textStatus, errorThrown)
+		{
+			//alert("wfs:GetCapabilities ERROR");
+			$("#addList").text("GeoServer의 WFS가 유효하지 않습니다.");
+		})
+		.always(function(data, textStatus, jqXHR)
+		{
+		});
 	});
 	
 	// candidate window에서 '확인'을 눌렀을 때
 	$("#addLayers").click(function(){
 		//alert('layer 추가 확인 클릭!');
-		if(candidateStatus == showingRasters)
+
+		var bExistCandidates = $("#addList").children("ul").length;
+		if(bExistCandidates === 0)
 		{
-			
+			candidateStatus = showingNone;
+			clearCandidateWindow();
+			return;
 		}
-		else if(candidateStatus == showingVectors)
+
+		var candidateList = $("#candidates").children("li");
+		var listToBeAdded = [];
+
+		for(i = 0; i < candidateList.length; i++)
 		{
+			var checkBox = $(candidateList[i]).children("input")[0];
+			var isChecked = $(checkBox).is(":checked");
+			if(isChecked)
+				listToBeAdded.push($(candidateList[i]).text());
+		}
+		//alert("selected layers : " + listToBeAdded);
 		
-		}
+		addLayersToList(listToBeAdded);
+		
 		candidateStatus = showingNone;
+		clearCandidateWindow();
 	});
 	
 	// candidate window에서 '취소'를 눌렀을 때
 	$("#cancelAddingLayers").click(function(){
 		//alert('layer 추가 취소 클릭!');
 		candidateStatus = showingNone;
+		
+		clearCandidateWindow();
 	});
 	
 	// '저장'를 눌렀을 때
@@ -242,7 +362,7 @@ $(function()
 		$("#serviceSettingVO").submit();
 	});
 	
-	// candidate window에서 '취소'를 눌렀을 때
+	// '취소'를 눌렀을 때
 	$("#cancelSetting").click(function(){
 		//alert('저장 취소클릭!');
 		$("#serviceSettingVO").attr({action : "<c:url value='/uat/uia/actionMain.do'/>"});
@@ -253,9 +373,309 @@ $(function()
 }
 );
 
-function checkResponse(data)
+function clearCandidateWindow()
 {
-	alert("data arriven.");
+	var headerNode = $("#sectionadd > h2")[0];
+	$(headerNode).text("Layer 추가");
+	$("#addList").empty();
+}
+
+function addLayersToList(listToBeAdded)
+{
+	var boundVarOfLayer;
+	var boundVarOfAlpha;
+	var targetList;
+	var targetUiList;
+	var upClass;
+	var downClass;
+	var deleteClass;
+	
+	if(candidateStatus == showingRasters)
+	{
+		boundVarOfLayer = "rasters";
+		boundVarOfAlpha = "rasterAlphas";
+		targetList = "#rasterList";
+		targetUiList = "#rasterListUiList";
+		upClass = "rasterUp";
+		downClass = "rasterDown";
+		deleteClass = "rasterDelete";
+	}
+	else if(candidateStatus == showingVectors)
+	{
+		boundVarOfLayer = "vectors";
+		boundVarOfAlpha = "vectorAlphas";
+		targetList = "#vectorList";
+		targetUiList = "#vectorListUiList";
+		upClass = "vectorUp";
+		downClass = "vectorDown";
+		deleteClass = "vectorDelete";
+	}
+	else
+		return;
+
+	for(i = 0; i < listToBeAdded.length; i++)
+	{
+		// layer name list
+		var newList = $("<li></li>");
+		
+		var label = $("<a></a>");
+		$(label).attr("href", "#");
+		$(label).text(listToBeAdded[i]);
+		$(newList).append(label);
+		
+		var input = $("<input>");
+		$(input).attr("type", "hidden");
+		$(input).attr("value", listToBeAdded[i]);
+		$(input).attr("name", boundVarOfLayer);
+		$(newList).append(input);
+		
+		$(targetList).append(newList);
+		
+		// layer name ui list
+		var newUiList = $("<li></li>");
+		
+		var buttonUp = $("<button></button>");
+		$(buttonUp).attr("class", "imgbtn up " + upClass);
+		$(buttonUp).attr("type", "button");
+		$(buttonUp).attr("title", "UP");
+		var spanUp = $("<span></span>");
+		$(spanUp).text("up");
+		$(buttonUp).append(spanUp);
+		$(newUiList).append(buttonUp);
+		
+		var buttonDown = $("<button></button>");
+		$(buttonDown).attr("class", "imgbtn down " + downClass);
+		$(buttonDown).attr("type", "button");
+		$(buttonDown).attr("title", "down");
+		var spanDown = $("<span></span>");
+		$(spanDown).text("down");
+		$(buttonDown).append(spanDown);
+		$(newUiList).append(buttonDown);
+		
+		var buttonDelete = $("<button></button>");
+		$(buttonDelete).attr("class", "imgbtn delete " + deleteClass);
+		$(buttonDelete).attr("type", "button");
+		$(buttonDelete).attr("title", "delete");
+		var spanDelete = $("<span></span>");
+		$(spanDelete).text("down");
+		$(buttonDelete).append(spanDelete);
+		$(newUiList).append(buttonDelete);
+		
+		var spanAlpha = $("<span></span>");
+		$(spanAlpha).text("alpha");
+		var inputAlpha = $("<input>");
+		$(inputAlpha).attr("type", "text");
+		$(inputAlpha).attr("value", "1.0");
+		$(inputAlpha).attr("name", boundVarOfAlpha);
+		$(spanAlpha).append(inputAlpha);
+		$(newUiList).append(spanAlpha);
+		
+		$(targetUiList).append(newUiList);
+		
+		// zorder를 올렸을 때
+		$(buttonUp).click(function(){
+			//alert('vector zorder up 클릭!');
+			var selectedItem = $(this).parent();
+			var selectedIndex = $(targetUiList + " > li").index(selectedItem);
+			//alert("selected item index : " + selectedIndex);
+			
+			if(selectedIndex <= 0)
+				return;
+			//alert("let's change zorder");
+			
+			var refVectorItem = $(targetList+ " > li").eq(selectedIndex-1);
+			var targetVectorItem = $(targetList+ " > li").eq(selectedIndex);
+			refVectorItem.before(targetVectorItem);
+			
+			var refUiItem = $(targetUiList + " > li").eq(selectedIndex-1);
+			var targetUiItem = $(targetUiList + " > li").eq(selectedIndex);
+			refUiItem.before(targetUiItem);
+		});
+		
+		// zorder를 내렸을 때
+		$(buttonDown).click(function(){
+			//alert('raster zorder down 클릭!');
+			var selectedItem = $(this).parent();
+			var selectedIndex = $(targetUiList + " > li").index(selectedItem);
+			//alert("selected item index : " + selectedIndex);
+			
+			if(selectedIndex >= $(targetUiList + " > li").length-1)
+				return;
+			//alert("let's change zorder");
+			
+			var refRasterItem = $(targetList+ " > li").eq(selectedIndex+1);
+			var targetRasterItem = $(targetList+ " > li").eq(selectedIndex);
+			refRasterItem.after(targetRasterItem);
+			
+			var refUiItem = $(targetUiList + " > li").eq(selectedIndex+1);
+			var targetUiItem = $(targetUiList + " > li").eq(selectedIndex);
+			refUiItem.after(targetUiItem);
+		});
+		
+		// 지웠을 때
+		$(buttonDelete).click(function(){
+			//alert('delete raster 클릭!');
+			var selectedItem = $(this).parent();
+			var selectedIndex = $(targetUiList + " > li").index(selectedItem);
+			//alert("selected item index : " + selectedIndex);
+			
+			$(targetUiList + " > li").eq(selectedIndex).remove();
+			$(targetList+ " > li").eq(selectedIndex).remove();
+		});
+	}
+}
+
+function resultOfCheckGeoServer(bAvailable, msg)
+{
+	if(bAvailable)
+	{
+		geoServerStatus = checkedAsSuccess;
+		$("#geoServerCheckResult").attr("class", "ok");
+		$("#geoServerCheckResult").text("사용 가능한 GeoServer URL입니다.");
+	}
+	else
+	{
+		geoServerStatus = checkedAsFailure;
+		$("#geoServerCheckResult").attr("class", "no");
+		$("#geoServerCheckResult").text(msg);
+	}
+}
+
+function extractRasterList(data)
+{
+	//alert("data arriven.");
+
+	var $xml = $(data);
+
+	var layerGroup = $xml.find("Capability").children("Layer")[0];
+	if(layerGroup == null)
+	{
+		$("#addList").text("Geoserver가 제공하는 raster가 없습니다.");
+		return;
+	}
+	//alert("layer group exists");
+
+	var layerCount = $(layerGroup).children("Layer").length;
+	if(layerCount <= 0)
+	{
+		$("#addList").text("Geoserver가 제공하는 raster가 없습니다.");
+		return;
+	}
+	//alert("layers exist");
+
+	var tmpLayerList = [];
+	$(layerGroup).children("Layer").each(function(){
+		var layerNameNode = $(this).children("Name")[0];
+		tmpLayerList.push($(layerNameNode).text());
+	});
+	//alert("layer candidates count : : " + tmpLayerList.length);
+	
+	var rasterList = [];
+	$("#rasterList").children("li").each(function(){
+		var rasterNameNode = $(this).children("a")[0];
+		rasterList.push($(rasterNameNode).text());
+	});
+	//alert("existing rasters : " + rasterList);
+
+	var finalCandidateList = [];
+	for(i = 0; i < tmpLayerList.length; i++)
+	{
+		var bAlreadyExist = false;
+		for(j = 0; j < rasterList.length; j++)
+		{
+			if(tmpLayerList[i] === rasterList[j])
+			{
+				bAlreadyExist = true;
+				break;
+			}
+		}
+		
+		if(!bAlreadyExist)
+			finalCandidateList.push(tmpLayerList[i]);
+	}
+	//alert("final candidates : " + finalCandidateList);
+	
+	var newUlNode = $("<ul></ul>");
+	$(newUlNode).attr("id", "candidates");
+	$(newUlNode).appendTo("#addList");
+
+	for(i = 0; i < finalCandidateList.length; i++)
+	{
+		var listItem = $("<li></li>");
+		var inputItem = $("<input>");
+		$(inputItem).attr("type", "checkbox");
+		listItem.append(inputItem);
+		listItem.append(finalCandidateList[i]);
+		$(newUlNode).append(listItem);
+	}
+}
+
+function extractVectorList(data)
+{
+	//alert("data arriven.");
+	var $xml = $(data);
+	
+	var featureTypeGroup = $xml.find("FeatureTypeList")[0];
+	if(featureTypeGroup == null)
+	{
+		$("#addList").text("Geoserver가 제공하는 vector가 없습니다.");
+		return;
+	}
+	//alert("layer group exists")
+	
+	var layerCount = $(featureTypeGroup).children("FeatureType").length;
+	if(layerCount <= 0)
+	{
+		$("#addList").text("Geoserver가 제공하는 vector가 없습니다.");
+		return;
+	}
+	//alert("layers exist");
+	
+	var tmpLayerList = [];
+	$(featureTypeGroup).children("FeatureType").each(function(){
+		var layerNameNode = $(this).children("Name")[0];
+		tmpLayerList.push($(layerNameNode).text());
+	});
+	//alert("layer candidates count : : " + tmpLayerList.length);
+	
+	var vectorList = [];
+	$("#vectorList").children("li").each(function(){
+		var rasterNameNode = $(this).children("a")[0];
+		vectorList.push($(rasterNameNode).text());
+	});
+	//alert("existing rasters : " + rasterList);
+	
+	var finalCandidateList = [];
+	for(i = 0; i < tmpLayerList.length; i++)
+	{
+		var bAlreadyExist = false;
+		for(j = 0; j < vectorList.length; j++)
+		{
+			if(tmpLayerList[i] === vectorList[j])
+			{
+				bAlreadyExist = true;
+				break;
+			}
+		}
+		
+		if(!bAlreadyExist)
+			finalCandidateList.push(tmpLayerList[i]);
+	}
+	//alert("final candidates : " + finalCandidateList);
+
+	var newUlNode = $("<ul></ul>");
+	$(newUlNode).attr("id", "candidates");
+	$(newUlNode).appendTo("#addList");
+
+	for(i = 0; i < finalCandidateList.length; i++)
+	{
+		var listItem = $("<li></li>");
+		var inputItem = $("<input>");
+		$(inputItem).attr("type", "checkbox");
+		listItem.append(inputItem);
+		listItem.append(finalCandidateList[i]);
+		$(newUlNode).append(listItem);
+	}
 }
 
 // save & cancel
@@ -317,6 +737,8 @@ function validateServiceSettings()
 		<input id="url" type="text" value="${serviceSetting.url}" size="100" name="url">
 	        </c:otherwise>
         </c:choose>
+        <input type="hidden" value="${serviceSetting.wmsVersion}" id="wmsVersion" name="wmsVersion">
+        <input type="hidden" value="${serviceSetting.wfsVersion}" id="wfsVersion" name="wfsVersion">
         <button id="checkGeoServer" class="btnsm" type="button">접근확인</button>
     </p>
     <p class="message">
@@ -356,9 +778,9 @@ function validateServiceSettings()
         <ul class="btns" id="rasterListUiList">
 			<c:forEach var="alpha" items="${serviceSetting.rasterAlphas}"  varStatus="status">
 			<li>
-                <button class="imgbtn up rasterUp" type="button" title="UP">up</button>
-                <button class="imgbtn down rasterDown" type="button" title="down">down</button>
-                <button class="imgbtn delete rasterDelete" type="button" title="delete">delete</button>
+                <button class="imgbtn up rasterUp" type="button" title="UP"><span>up</span></button>
+                <button class="imgbtn down rasterDown" type="button" title="down"><span>down</span></button>
+                <button class="imgbtn delete rasterDelete" type="button" title="delete"><span>delete</span></button>
                 <span>alpha <input type="text" value="${alpha}" name="rasterAlphas"></span>
             </li>
 			</c:forEach>
@@ -378,9 +800,9 @@ function validateServiceSettings()
         <ul class="btns" id="vectorListUiList">
 			<c:forEach var="alpha" items="${serviceSetting.vectorAlphas}" varStatus="status">
 			<li>
-                <button class="imgbtn up vectorUp" type="button" title="UP">up</button>
-                <button class="imgbtn down vectorDown" type="button" title="down">down</button>
-                <button class="imgbtn delete vectorDelete" type="button" title="delete">delete</button>
+                <button class="imgbtn up vectorUp" type="button" title="UP"><span>up</span></button>
+                <button class="imgbtn down vectorDown" type="button" title="down"><span>down</span></button>
+                <button class="imgbtn delete vectorDelete" type="button" title="delete"><span>delete</span></button>
                 <span>alpha <input type="text" value="${alpha}" name="vectorAlphas"></span>
             </li>
 			</c:forEach>
@@ -394,9 +816,9 @@ function validateServiceSettings()
 <!-- END CONTENTS -->
 
 <div id="sectionadd" style="display:;">
-	<h2>추가</h2>
-    <div class="addlist">
-    	내용
+	<h2>Layer 추가</h2>
+    <div class="addlist" id="addList">
+    	
     </div>
     <div class="AlignCenter">
         <button id="addLayers" class="btnsm" type="button">확인</button>
